@@ -7,7 +7,6 @@ import cnab_bradesc.demo.Utils.ConstantesUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
@@ -103,7 +102,6 @@ public class RegistroDetalheSegmentosBusiness {
         segA.setCodigoInstrucaoMovimento("00");
         segA.setCodigoCamaraCentralizadora("000");
         segA.setCodigoBancoFavorecido(ConstantesUtil.CODIGO_BANCO);
-
 
         String agencia = formatter.formatCellValue(row.getCell(14), evaluator).replaceAll("\\D", "");
         segA.setAgencia(String.format("%05d", agencia.isEmpty() ? 0 : Long.parseLong(agencia)));

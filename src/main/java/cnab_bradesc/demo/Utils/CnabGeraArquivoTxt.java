@@ -1,4 +1,4 @@
-package cnab_bradesc.demo.Business;
+package cnab_bradesc.demo.Utils;
 
 import cnab_bradesc.demo.DTO.RegistroSegmentoABDTO;
 import cnab_bradesc.demo.Registros.*;
@@ -13,11 +13,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-public class ArquivoCnabTxtBusiness {
+public class CnabGeraArquivoTxt {
 
-    private static final Logger log = LoggerFactory.getLogger(ArquivoCnabTxtBusiness.class);
+    private static final Logger log = LoggerFactory.getLogger(CnabGeraArquivoTxt.class);
 
-    public void gerarArquivoTxt(HeaderArquivo header, HeaderLote headerLote, List<RegistroSegmentoABDTO> registros, RegistroTrailerLote registroTrailerLote) throws IOException {
+    public void gerarArquivoTxt(HeaderArquivo header, HeaderLote headerLote, List<RegistroSegmentoABDTO> registros, RegistroTrailerLote registroTrailerLote) {
 
         StringBuilder arquivoFinal = new StringBuilder();
 
@@ -196,7 +196,7 @@ public class ArquivoCnabTxtBusiness {
     public StringBuilder montaTrailerArquivo(int qtdLotes, int qtdRegistros, int qtdContas) {
         StringBuilder trailerArquivo = new StringBuilder();
 
-        trailerArquivo.append("237"); // Código do banco
+        trailerArquivo.append(ConstantesUtil.CODIGO_BANCO); // Código do banco
         trailerArquivo.append("9999"); // Lote de serviço
         trailerArquivo.append("9");    // Tipo de registro
         trailerArquivo.append("         "); // 9 espaços
@@ -213,7 +213,7 @@ public class ArquivoCnabTxtBusiness {
         return 1 + (registros.size() * 2) + 1;
     }
 
-    public void salvarEmArquivoTxt(StringBuilder conteudo) throws IOException {
+    public void salvarEmArquivoTxt(StringBuilder conteudo) {
 
         File arquivo = cnab_bradesc.demo.View.SalvaArquivoView.escolherLocalSalvar();
 
@@ -222,11 +222,6 @@ public class ArquivoCnabTxtBusiness {
             return;
         }
 
-        // Cria diretórios se não existirem
-        File diretorio = arquivo.getParentFile();
-        if (diretorio != null && !diretorio.exists()) {
-            diretorio.mkdirs();
-        }
 
         // Escreve no arquivo
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
@@ -235,6 +230,6 @@ public class ArquivoCnabTxtBusiness {
             throw new RuntimeException(e);
         }
 
-        log.info("Arquivo salvo com sucesso em: " + arquivo.getAbsolutePath());
+        log.info("Arquivo salvo com sucesso em: {}", arquivo.getAbsolutePath());
     }
 }
