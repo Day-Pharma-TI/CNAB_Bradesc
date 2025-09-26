@@ -6,7 +6,6 @@ import cnab_bradesc.demo.Registros.HeaderLote;
 import cnab_bradesc.demo.Registros.RegistroTrailerLote;
 import cnab_bradesc.demo.Utils.CnabGeraArquivoTxt;
 import org.springframework.stereotype.Service;
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -32,7 +31,7 @@ public class GeraCnabPagamentoBusiness {
         this.gerarCnabGeraArquivoTxt = gerarCnabGeraArquivoTxt;
     }
 
-    public void GerarCnabPagamento() throws IOException {
+    public void GerarCnabPagamento() {
         HeaderArquivo headerArquivo = geraHeaderArquivoBusiness.gerarHearArquivo();
         HeaderLote headerLote = gerarHeaderLoteBusiness.gerarHeaderLote();
         List<RegistroSegmentoABDTO> segmentos = geraRegistroDetalheSegmentosBusiness.geraRegistroDeSegmentoAb();

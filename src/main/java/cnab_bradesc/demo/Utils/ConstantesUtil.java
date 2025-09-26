@@ -3,6 +3,10 @@ package cnab_bradesc.demo.Utils;
 public final class ConstantesUtil {
 
     public static final int CODIGO_BANCO = 237;
+    public static final String DIGITO_VERIFICADOR_AGENCIA_EMPRESA = "0";
+    public static final String DIGITO_VERIFICADOR_CONTA_EMPRESA = "7";
+    public static final int TIPO_INSCRICAO_EMRPESA = 2;
+    public static final String DENSIDADE_ARQUIVO = "01600";
     public static final String LOTE_PADRAO = "0001";
     public static final int TIPO_REGISTRO_DETALHE = 3;
     public static final String CODIGO_SEGMENTO_A = "A";
@@ -14,7 +18,7 @@ public final class ConstantesUtil {
     public static final String NOME_BANCO = "BANCO BRADESCO S.A";
     public static final String CODIGO_CONVENIO_BANCO = "370328";
     public static final String VERSAO_LEAYOUT_HEADER_ARQUIVO = "089";
-    public static final String RESERVADO_BANCO = "            ";
+    public static final String RESERVADO_BANCO = " ".repeat(12);
     public static final String TIPO_MOEDA = "BRL";
     public static final String LOGRADOURO_EMPRESA = "Paulo Donaio Schincariol";
     public static final String NUMERO_ED_EMPRESA = "10";
