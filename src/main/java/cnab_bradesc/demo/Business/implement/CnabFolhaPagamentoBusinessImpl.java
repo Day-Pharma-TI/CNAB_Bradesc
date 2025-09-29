@@ -4,7 +4,6 @@ import cnab_bradesc.demo.Business.CnabFolhaPagamentoBusiness;
 import cnab_bradesc.demo.DTO.RegistroSegmentoABDTO;
 import cnab_bradesc.demo.Registros.RegistroDetalheSegmentoA;
 import cnab_bradesc.demo.Registros.RegistroDetalheSegmentoB;
-import cnab_bradesc.demo.Utils.CnabGeraArquivoTxt;
 import cnab_bradesc.demo.Utils.ConstantesUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
