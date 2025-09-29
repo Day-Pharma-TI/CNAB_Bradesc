@@ -17,31 +17,6 @@ public class CnabGeraArquivoTxt {
 
     private static final Logger log = LoggerFactory.getLogger(CnabGeraArquivoTxt.class);
 
-    public void gerarArquivoTxt(HeaderArquivo header, HeaderLote headerLote, List<RegistroSegmentoABDTO> registros, RegistroTrailerLote registroTrailerLote) {
-
-        StringBuilder arquivoFinal = new StringBuilder();
-
-        StringBuilder headerArquivoTxt = montaHeaderArquivo(header);
-        StringBuilder headerLoteTxt = montaHeaderLote(headerLote);
-        StringBuilder detalhes = montaDetalhesSegmentos(registros);
-        StringBuilder trailerLoteTxt = montaTrailerLote(registroTrailerLote, registros);
-
-        int qtdRegistros = 1+1 + (registros.size() * 2 ) + 1 + 1;
-
-        StringBuilder trailerArquivoTxt = montaTrailerArquivo(
-                1,
-                qtdRegistros,
-                0
-        );
-
-        arquivoFinal.append(headerArquivoTxt).append("\n")
-                .append(headerLoteTxt).append("\n")
-                .append(detalhes)
-                .append(trailerLoteTxt).append("\n")
-                .append(trailerArquivoTxt);
-
-        salvarEmArquivoTxt(arquivoFinal);
-    }
 
     public StringBuilder montaHeaderArquivo(HeaderArquivo header){
 
@@ -213,23 +188,18 @@ public class CnabGeraArquivoTxt {
         return 1 + (registros.size() * 2) + 1;
     }
 
-    public void salvarEmArquivoTxt(StringBuilder conteudo) {
+    public byte[] gerarArquivoTxtBytes(HeaderArquivo header, HeaderLote headerLote,
+                                       List<RegistroSegmentoABDTO> registros,
+                                       RegistroTrailerLote registroTrailerLote) {
 
-        File arquivo = cnab_bradesc.demo.View.SalvaArquivoView.escolherLocalSalvar();
+        StringBuilder arquivoFinal = new StringBuilder();
 
-        if(arquivo == null){
-            log.info("Usuario cancelou a escolha do arquivo");
-            return;
-        }
+        arquivoFinal.append(montaHeaderArquivo(header)).append("\n")
+                .append(montaHeaderLote(headerLote)).append("\n")
+                .append(montaDetalhesSegmentos(registros))
+                .append(montaTrailerLote(registroTrailerLote, registros)).append("\n")
+                .append(montaTrailerArquivo(1, 1 + registros.size() * 2 + 2, 0));
 
-
-        // Escreve no arquivo
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
-            writer.write(conteudo.toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        log.info("Arquivo salvo com sucesso em: {}", arquivo.getAbsolutePath());
+        return arquivoFinal.toString().getBytes(); // converte para bytes
     }
 }

@@ -1,63 +1,36 @@
-package cnab_bradesc.demo.Business;
+package cnab_bradesc.demo.Business.implement;
 
+import cnab_bradesc.demo.Business.CnabFolhaPagamentoBusiness;
 import cnab_bradesc.demo.DTO.RegistroSegmentoABDTO;
 import cnab_bradesc.demo.Registros.RegistroDetalheSegmentoA;
 import cnab_bradesc.demo.Registros.RegistroDetalheSegmentoB;
+import cnab_bradesc.demo.Utils.CnabGeraArquivoTxt;
 import cnab_bradesc.demo.Utils.ConstantesUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-import java.io.FileInputStream;
+import org.springframework.web.multipart.MultipartFile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
-public class RegistroDetalheSegmentosBusiness {
+public class CnabFolhaPagamentoBusinessImpl implements CnabFolhaPagamentoBusiness {
 
-    public List<RegistroSegmentoABDTO> geraRegistroDeSegmentoAb() {
+    @Override
+    public List<RegistroSegmentoABDTO> geraRegistroDeSegmento(MultipartFile file, boolean tipoPagamento) {
 
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Selecione o arquivo excel");
+        String nomeArquivo = file.getOriginalFilename();
 
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Arquivos Excel (*.xlsx)", "xlsx");
-        fileChooser.setFileFilter(filtro);
-
-        int resultado = fileChooser.showOpenDialog(null);
-
-        if (resultado != JFileChooser.APPROVE_OPTION) {
-            JOptionPane.showMessageDialog(null, "Nenhum arquivo selecionado", "Aviso", JOptionPane.WARNING_MESSAGE);
+        if (nomeArquivo == null || !nomeArquivo.toLowerCase().endsWith(".xls")) {
+            System.out.println("Arquivo incorreto");
         }
-
-        File arquivoSelecionado = fileChooser.getSelectedFile();
-
-        if (!arquivoSelecionado.getName().toLowerCase().endsWith(".xlsx")) {
-            JOptionPane.showMessageDialog(null, "Por favor, selecione um arquivo .xlsx valido!", "Erro!", JOptionPane.ERROR_MESSAGE);
-        }
-
-        // Perguntar uma vez só
-        String[] options = {"Pagamento", "Adiantamento"};
-        int escolha = JOptionPane.showOptionDialog(
-                null,
-                "Selecionar o tipo de operação",
-                "Tipo de operação",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-        boolean isPagamento = (escolha == 0); // true se Pagamento, false se Adiantamento
 
         List<RegistroSegmentoABDTO> listRegistrosSegmentoAeB = new ArrayList<>();
         DataFormatter formatter = new DataFormatter();
 
-        try (FileInputStream fis = new FileInputStream(arquivoSelecionado);
-             Workbook workbook = new XSSFWorkbook(fis)) {
+        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())){
 
             Sheet sheet = workbook.getSheetAt(0); // primeira aba
             FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
@@ -70,7 +43,7 @@ public class RegistroDetalheSegmentosBusiness {
 
                 RegistroSegmentoABDTO registroSegmentoDTO = new RegistroSegmentoABDTO();
 
-                RegistroDetalheSegmentoA segmentoA = criaRegistroSegmentoA(row, numeroSequencial, formatter, evaluator, isPagamento);
+                RegistroDetalheSegmentoA segmentoA = criaRegistroSegmentoA(row, numeroSequencial, formatter, evaluator, tipoPagamento);
                 numeroSequencial++;
 
                 RegistroDetalheSegmentoB segmentoB = criaRegistroDetalheSegmentoB(row, numeroSequencial, formatter, evaluator);
@@ -133,7 +106,7 @@ public class RegistroDetalheSegmentosBusiness {
                 dataPagamento = formatter.formatCellValue(cellPagamento, evaluator).replaceAll("[^0-9]", "");
             }
         } else {
-            dataPagamento = "";
+            dataPagamento = "Erro ao formatar a data de pagamento";
         }
         segA.setDataPagamento(String.format("%8s", dataPagamento));
 
@@ -141,9 +114,8 @@ public class RegistroDetalheSegmentosBusiness {
         String quantidadeMoeda = String.format("%015d", 0);
         segA.setQuantidadeMoeda(quantidadeMoeda);
 
-        // Aqui decide a célula do valor conforme a escolha
-        Cell cellValorPag = isPagamento ? row.getCell(12) : row.getCell(7);
 
+        Cell cellValorPag = isPagamento ? row.getCell(12) : row.getCell(7);
         String valorPag;
         if (cellValorPag != null) {
             CellValue eval = evaluator.evaluate(cellValorPag);
@@ -158,11 +130,11 @@ public class RegistroDetalheSegmentosBusiness {
                     long emCentavos = Math.round(valor * 100);
                     valorPag = String.format("%015d", emCentavos);
                 } catch (NumberFormatException e) {
-                    valorPag = "000000000000000";
+                    valorPag = "erro ao extrair o valor";
                 }
             }
         } else {
-            valorPag = "000000000000000";
+            valorPag = "erro ao extrair o valor";
         }
 
         segA.setValorPagamento(valorPag);
@@ -198,10 +170,11 @@ public class RegistroDetalheSegmentosBusiness {
                 dataVencimento = formatter.formatCellValue(cellVencimento, evaluator).replaceAll("[^0-9]", "");
             }
         } else {
-            dataVencimento = "";
+            dataVencimento = "Erro ao formatar a data de vencimento";
         }
         registroB.setDataVencimento(String.format("%8s", dataVencimento));
 
         return registroB;
     }
+
 }
