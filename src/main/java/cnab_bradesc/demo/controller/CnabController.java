@@ -47,10 +47,6 @@ public class CnabController {
     @PostMapping("/folhapag/upload")
     public ResponseEntity<?> uploadCnab(@RequestParam("arquivo") MultipartFile file, @RequestParam boolean tipoPagamento) {
 
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
         try {
 
             HeaderArquivo headerArquivo = headerArquivoBusiness.gerarHearArquivo();

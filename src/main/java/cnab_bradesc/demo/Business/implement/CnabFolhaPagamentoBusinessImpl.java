@@ -22,8 +22,8 @@ public class CnabFolhaPagamentoBusinessImpl implements CnabFolhaPagamentoBusines
 
         String nomeArquivo = file.getOriginalFilename();
 
-        if (nomeArquivo == null || !nomeArquivo.toLowerCase().endsWith(".xls")) {
-            System.out.println("Arquivo incorreto");
+        if (nomeArquivo == null || !nomeArquivo.toLowerCase().endsWith(".xlsx")) {
+            throw new RuntimeException("Arquivo no formato incorreto, formato esperado: xlsx");
         }
 
         List<RegistroSegmentoABDTO> listRegistrosSegmentoAeB = new ArrayList<>();
